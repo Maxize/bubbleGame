@@ -79,6 +79,7 @@ void StartLayer::menuCloseCallback(Ref* pSender)
 
 void StartLayer::menuNewGameCallback(Ref* pSender)
 {
-	Director::getInstance()->replaceScene(GameScene::scene());
+	auto gameScene = GameScene::scene();
+	Director::getInstance()->replaceScene(gameScene);
 }
 

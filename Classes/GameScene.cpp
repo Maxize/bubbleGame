@@ -51,10 +51,10 @@ bool GameScene::init()
 		background->setPosition(CCPointZero);
 		this->addChild(background);
 
-		CC_BREAK_IF(!GameScene::initScheduler());
+		/*CC_BREAK_IF(!GameScene::initScheduler());
 		CC_BREAK_IF(!GameScene::initBoard());
 		CC_BREAK_IF(!GameScene::initReadyBubble());
-		CC_BREAK_IF(!GameScene::initWaitBubble());
+		CC_BREAK_IF(!GameScene::initWaitBubble());*/
 
 		this->setEnable();
 		
@@ -210,7 +210,7 @@ void GameScene::clear()
 bool GameScene::isCollisionWithBorder()	//ÊÇ·ñºÍ±ßÔµÅö×²
 {
 	Size size = Director::getInstance()->getWinSize();
-	Point pos = m_curReady->getPosition();
+	CCPoint pos = m_curReady->getPosition();
 
 	if (pos.x < BUBBLE_RADIUS || pos.x > size.width - BUBBLE_RADIUS)
 	{
@@ -227,7 +227,7 @@ bool GameScene::isCollisionWithTopBorder(Bubble *pBubble)
 		return false;
 	}
 
-	Point pos = pBubble->getPosition();
+	CCPoint pos = pBubble->getPosition();
 	Size size = Director::getInstance()->getWinSize();
 	if (pos.y > size.height - BUBBLE_RADIUS)
 	{
@@ -269,6 +269,15 @@ bool GameScene::isCollision()
 void GameScene::setEnable()
 {
 	//Director::getInstance()->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
+	// Register Touch Event
+	auto listener = EventListenerTouchOneByOne::create();
+	listener->setSwallowTouches(true);
+
+	listener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
+	listener->onTouchMoved = CC_CALLBACK_2(GameScene::onTouchMoved, this);
+	listener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);
+
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 }
 
 void GameScene::setDisableEnable()
@@ -295,7 +304,7 @@ void GameScene::onTouchEnded(CCTouch *pTouch, CCEvent *pEvent)
 	m_state = GS_FLY;
 
 	Point pos = pTouch->getLocation();
-	m_real = ccpNormalize(ccpSub(pos, m_curReady->getPosition()));
+	//m_real = ccpNormalize(ccpSub(pos, m_curReady->getPosition()));
 
 	setDisableEnable();
 	this->scheduleUpdate();
@@ -614,7 +623,7 @@ void GameScene::downBubbleAction(Bubble *pBubble)
 {
 	float offY = -100;
 
-	Point pos = pBubble->getPosition();
+	CCPoint pos = pBubble->getPosition();
 	pBubble->runAction(
 			CCSequence::create(
 				CCMoveTo::create((pos.y - offY) / 600.0, ccp(pos.x, offY)),
