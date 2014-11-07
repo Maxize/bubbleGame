@@ -12,6 +12,24 @@ GameScene::GameScene():
 	SimpleAudioEngine::getInstance()->playBackgroundMusic("game_scene_bg.mp3", true);
 	SimpleAudioEngine::getInstance()->playEffect("ready_go.mp3");
 	srand(time(NULL));
+
+	//¼ÓÔØ±³¾°
+	Sprite *background = Sprite::create("background1.jpg");
+	background->setAnchorPoint(CCPointZero);
+	background->setPosition(CCPointZero);
+	this->addChild(background);
+
+	
+	initScheduler();
+	initBoard();
+	initReadyBubble();
+	initWaitBubble();
+	//CC_BREAK_IF(!GameScene::initBoard());
+	//CC_BREAK_IF(!GameScene::initReadyBubble());
+	//CC_BREAK_IF(!GameScene::initWaitBubble());
+
+	this->setEnable();
+
 }
 
 GameScene::~GameScene()
@@ -19,56 +37,10 @@ GameScene::~GameScene()
 	//clear();
 }
 
-Scene* GameScene::scene()
-{
-	Scene* scene = NULL;
-	do 
-	{
-		scene = Scene::create();
-		CC_BREAK_IF(!scene);
-
-		GameScene* layer = GameScene::create();
-		CC_BREAK_IF(!layer);
-
-		scene->addChild(layer);
-
-	} while (0);
-
-	return scene;
-}
-
-bool GameScene::init()
-{
-	bool bRet = false;
-	do 
-	{
-		CC_BREAK_IF(!Layer::init());
-
-		//¼ÓÔØ±³¾°
-		Sprite *background = Sprite::create("background1.jpg");
-		CC_BREAK_IF(!background);
-		background->setAnchorPoint(CCPointZero);
-		background->setPosition(CCPointZero);
-		this->addChild(background);
-
-		/*CC_BREAK_IF(!GameScene::initScheduler());
-		CC_BREAK_IF(!GameScene::initBoard());
-		CC_BREAK_IF(!GameScene::initReadyBubble());
-		CC_BREAK_IF(!GameScene::initWaitBubble());*/
-
-		this->setEnable();
-		
-		bRet = true;
-
-	} while (0);
-
-	return bRet;
-}
-
 bool GameScene::initScheduler()
 {
-	//this->schedule(schedule_selector(GameScene::loop), 1.0f);
-	//this->scheduleUpdate();
+	this->schedule(schedule_selector(GameScene::loop), 1.0f);
+	this->scheduleUpdate();
 	return true;
 }
 
@@ -115,43 +87,28 @@ bool GameScene::initBoard()
 //³õÈç»¯ÅÝÅÝ·¢ÉäÆ÷
 bool GameScene::initReadyBubble()
 {
-	bool bRet = false;
-	do 
-	{
-		m_curReady = randomBubble();
-		CC_BREAK_IF(!m_curReady);
+	m_curReady = randomBubble();
 
-		Size size = Director::getInstance()->getWinSize();
-		m_curReady->setPosition(ccp(size.width / 2, size.height / 10));
+	Size size = Director::getInstance()->getWinSize();
+	m_curReady->setPosition(ccp(size.width / 2, size.height / 10));
 
-		this->addChild(m_curReady);
+	this->addChild(m_curReady);
+	return true;
 
-		bRet = true;
-	} while (0);
-
-	return bRet;
 }
 
 bool GameScene::initWaitBubble()
 {
-	bool bRet = false;
-	do 
+	for (int i = 0; i < MAX_WAIT_BUBBLE; i++)
 	{
-		for (int i = 0; i < MAX_WAIT_BUBBLE; i++)
-		{
-			Bubble *pBubble = randomBubble();
-			CC_BREAK_IF(!pBubble);
+		Bubble *pBubble = randomBubble();
+		Size size = Director::getInstance()->getWinSize();
+		pBubble->setPosition(ccp(size.width / 2 + (i + 1) * BUBBLE_RADIUS * 2, size.height / 20));
+		m_wait[i] = pBubble;
+		this->addChild(pBubble);
 
-			Size size = CCDirector::sharedDirector()->getWinSize();
-			pBubble->setPosition(ccp(size.width/2 + (i+1) * BUBBLE_RADIUS * 2,  size.height/20));
-			m_wait[i] = pBubble;
-			this->addChild(pBubble);
-
-			bRet = true;
-		}
-	} while (0);
-
-	return bRet;
+	}
+	return true;
 }
 Bubble* GameScene::randomBubble()
 {
@@ -210,7 +167,7 @@ void GameScene::clear()
 bool GameScene::isCollisionWithBorder()	//ÊÇ·ñºÍ±ßÔµÅö×²
 {
 	Size size = Director::getInstance()->getWinSize();
-	CCPoint pos = m_curReady->getPosition();
+	Point pos = m_curReady->getPosition();
 
 	if (pos.x < BUBBLE_RADIUS || pos.x > size.width - BUBBLE_RADIUS)
 	{
@@ -623,7 +580,7 @@ void GameScene::downBubbleAction(Bubble *pBubble)
 {
 	float offY = -100;
 
-	CCPoint pos = pBubble->getPosition();
+	Point pos = pBubble->getPosition();
 	pBubble->runAction(
 			CCSequence::create(
 				CCMoveTo::create((pos.y - offY) / 600.0, ccp(pos.x, offY)),

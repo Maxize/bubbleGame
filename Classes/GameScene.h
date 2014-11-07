@@ -44,19 +44,12 @@ public:
 	~GameScene();
 
 public:
-	//ΩÁ√Êœ‘ æ
-	static cocos2d::Scene* scene();
-
-	virtual bool init();
-
 	void loop(float);
 	void update(float);
 
-	bool onTouchBegan(CCTouch *pTouch, CCEvent *pEvent);
-	void onTouchMoved(CCTouch *pTouch, CCEvent *pEvent);
-	void onTouchEnded(CCTouch *pTouch, CCEvent *pEvent);
-
-	CREATE_FUNC(GameScene);
+	bool onTouchBegan(Touch *pTouch, Event *pEvent);
+	void onTouchMoved(Touch *pTouch, Event *pEvent);
+	void onTouchEnded(Touch *pTouch, Event *pEvent);
 
 private:
 	Bubble* randomBubble();

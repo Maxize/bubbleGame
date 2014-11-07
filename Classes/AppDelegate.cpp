@@ -35,9 +35,11 @@ bool AppDelegate::applicationDidFinishLaunching()
 	director->setAnimationInterval(1.0 / 60);
 
 	// create a scene. it's an autorelease object
-	auto scene = StartLayer::scene();
+	auto scene = Scene::create();
+	auto layer = new StartLayer();
 
-	// run
+	layer->autorelease();
+	scene->addChild(layer);
 	director->runWithScene(scene);
 
 	return true;

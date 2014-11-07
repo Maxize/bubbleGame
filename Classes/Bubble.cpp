@@ -2,36 +2,13 @@
 
 Bubble::Bubble()
 {
-	
+	m_color = COLOR_COUNT;
+	m_nRowIndex = -1;
+	m_nColIndex = -1;
 }
 
 Bubble::~Bubble()
 {
-}
-
-
-
-bool Bubble::init()
-{
-	m_color = COLOR_COUNT;
-	m_nRowIndex = -1;
-	m_nColIndex = -1;
-	return true;
-}
-
-Bubble* Bubble::create(const char *pszFileName)
-{
-	Bubble* bubble = new Bubble();
-	if (bubble && bubble->initWithFile(pszFileName))
-	{
-		bubble->autorelease();
-	}
-	else
-	{
-		CC_SAFE_DELETE(bubble);
-	}
-
-	return bubble;
 }
 
 void Bubble::setBubbleColor(BUBBLE_COLOR color)
