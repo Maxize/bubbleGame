@@ -1,0 +1,10 @@
+bin/*
+cocos2d/*
+proj.ios_mac/*
+proj.linux/*
+proj.win32/*
+proj.wp8-xaml/*
+proj.android/*
+!proj.android/jni
+proj.android/jni/*
+!proj.android/jni/Android.mk
