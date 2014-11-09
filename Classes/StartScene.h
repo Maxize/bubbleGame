@@ -1,23 +1,16 @@
-#ifndef __HELLOWORLD_SCENE_H__
-#define __HELLOWORLD_SCENE_H__
+#ifndef __STARTSCENE_H__
+#define __STARTSCENE_H__
 
 #include "cocos2d.h"
+using namespace cocos2d;
 
-#include "SimpleAudioEngine.h"
-
-using namespace CocosDenshion;
-
-class StartLayer : public cocos2d::Layer
+class StartScene : public Scene
 {
 public:
 
-	StartLayer();
-	~StartLayer();
-    // a selector callback
-	void menuCloseCallback(Ref* pSender);
-
-	void menuNewGameCallback(Ref* pSender);
+	virtual bool init();
+	CREATE_FUNC(StartScene);
 
 };
 
-#endif  // __HELLOWORLD_SCENE_H__
+#endif  // __STARTSCENE_H__

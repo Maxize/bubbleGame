@@ -10,7 +10,7 @@
 
 using namespace cocos2d;
 
-inline CCPoint getPosByRowAndCol(int row, int col);
+inline Point getPosByRowAndCol(int row, int col);
 inline RowCol GetRowColByPos( int nPosX, int nPosY);
 
 inline bool IsValidPos( int nRow, int nCol );
@@ -21,16 +21,16 @@ inline void GetAround( int nRow, int nCol, std::vector<RowCol> & vecRowCol );
 inline void GetGoldenLine (int nRow, int nCol, ROWCOL_LIST& listRowCol);
 inline void GetSliveryLine(int nRow, int nCol, ROWCOL_LIST& listRowCol);
 
-CCPoint getPosByRowAndCol(int row, int col)
+Point getPosByRowAndCol(int row, int col)
 {
 	float posX, posY;
 
-	CCSize size = CCDirector::sharedDirector()->getWinSize();
+	Size size = Director::getInstance()->getWinSize();
 
 	posX = col * 2 * BUBBLE_RADIUS + BUBBLE_RADIUS + (row % 2) * BUBBLE_RADIUS;
 	posY = size.height - ( row * 2 * BUBBLE_RADIUS * sin(PI/3) + BUBBLE_RADIUS );
 
-	return ccp(posX, posY);
+	return Point(posX, posY);
 }
 
 RowCol GetRowColByPos( int nPosX, int nPosY)
@@ -38,7 +38,7 @@ RowCol GetRowColByPos( int nPosX, int nPosY)
 	int nRow, nCol;
 	//需要四舍五入
 
-	nPosY = CCDirector::sharedDirector()->getWinSize().height - nPosY;
+	nPosY = Director::getInstance()->getWinSize().height - nPosY;
 
 	nRow = ( nPosY -BUBBLE_RADIUS )/( 2 *BUBBLE_RADIUS *sin ( PI/3 ) ) +0.5;
 

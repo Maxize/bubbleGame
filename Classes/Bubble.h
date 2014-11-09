@@ -29,18 +29,7 @@ public:
 	~Bubble();
 
 public:
-	virtual bool init();
-	CREATE_FUNC(Bubble);
-	static Bubble* create(const std::string &spritefilename)
-	{
-		auto bubble = new Bubble();
-		bubble->initWithFile(spritefilename);
-		bubble->autorelease();
-
-		auto shaderState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR);
-		bubble->setGLProgramState(shaderState);
-		return bubble;
-	}
+	static Bubble* create(const std::string &spritefilename);
 
 public:
 	void setBubbleColor(BUBBLE_COLOR Color);

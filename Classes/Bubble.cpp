@@ -5,10 +5,26 @@ Bubble::Bubble()
 	m_color = COLOR_COUNT;
 	m_nRowIndex = -1;
 	m_nColIndex = -1;
+
 }
 
 Bubble::~Bubble()
 {
+}
+
+Bubble* Bubble::create(const std::string &spritefilename)
+{
+	auto bubble = new Bubble();
+	if (bubble && bubble->initWithFile(spritefilename))
+	{
+		auto shaderState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR);
+		bubble->setGLProgramState(shaderState);
+		bubble->autorelease();
+		return bubble;
+	}
+
+	CC_SAFE_DELETE(bubble);
+	return nullptr;
 }
 
 void Bubble::setBubbleColor(BUBBLE_COLOR color)
