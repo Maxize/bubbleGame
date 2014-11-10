@@ -19,6 +19,8 @@ Bubble* Bubble::create(const std::string &spritefilename)
 	{
 		auto shaderState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR);
 		bubble->setGLProgramState(shaderState);
+		//bubble->ignoreAnchorPointForPosition(true);
+		//bubble->setAnchorPoint(Vec2(0, 0));
 		bubble->autorelease();
 		return bubble;
 	}

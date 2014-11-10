@@ -26,7 +26,7 @@
 #define MAX_WAIT_BUBBLE		(4)
 #define BUBBLE_SPEED		(30)
 
-#define READY_BUBBLE_POS	ccp(360, 128)
+#define READY_BUBBLE_POS	Point(360, 128)
 
 #define REMOVE_COUNT		(3)
 #define SILVERY_COUNT		(4)

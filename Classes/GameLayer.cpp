@@ -23,8 +23,8 @@ bool GameLayer::init()
 
 	//加载背景
 	Sprite *background = Sprite::create("background1.jpg");
-	background->setAnchorPoint(CCPointZero);
-	background->setPosition(CCPointZero);
+	background->setAnchorPoint(Vec2::ZERO);
+	background->setPosition(Vec2::ZERO);
 	this->addChild(background);
 
 	initScheduler();
@@ -39,8 +39,8 @@ bool GameLayer::init()
 
 bool GameLayer::initScheduler()
 {
-	this->schedule(schedule_selector(GameLayer::loop), 1.0f);
-	this->scheduleUpdate();
+	//this->schedule(schedule_selector(GameLayer::loop), 1.0f);
+	//this->scheduleUpdate();
 	return true;
 }
 
@@ -67,6 +67,7 @@ bool GameLayer::initBoard()
 			// 
 			Point point = getPosByRowAndCol(row, col);
 			pBubble->setPosition(point.x, point.y);
+			//pBubble->setPosition(100, 200);
 			//CCLOG(" point.x = %f, point.y = %f", point.x, point.y);
 
 			this->addChild(pBubble);
@@ -227,6 +228,7 @@ void GameLayer::setEnable()
 
 void GameLayer::setDisableEnable()
 {
+	_eventDispatcher->pauseEventListenersForTarget(this, true);
 	//Director::getInstance()->getTouchDispatcher()->removeDelegate(this);
 }
 
@@ -245,7 +247,7 @@ void GameLayer::onTouchEnded(Touch *pTouch, Event *pEvent)
 	m_state = GS_FLY;
 
 	Point pos = pTouch->getLocation();
-	//m_real = ccpNormalize(ccpSub(pos, m_curReady->getPosition()));
+	m_real = ccpNormalize(ccpSub(pos, m_curReady->getPosition()));
 
 	setDisableEnable();
 	this->scheduleUpdate();
@@ -258,6 +260,8 @@ void GameLayer::loop(float dt)
 
 void GameLayer::update(float delta)
 {
+	//CCLOG("GameLayer is update all the time! ---------------");
+
 	if (isCollisionWithBorder())
 	{
 		m_real.x = -m_real.x;
@@ -268,7 +272,7 @@ void GameLayer::update(float delta)
 
 	if (isCollision())	//如果和球或者上边缘碰撞了， 做相应的处理
 	{
-		m_real = CCPointZero;
+		m_real = Vec2::ZERO;
 		adjustBubblePosition();
 
 		//根据同样的球数量作出相应的清理处理

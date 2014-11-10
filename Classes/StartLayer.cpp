@@ -14,15 +14,18 @@ bool StartLayer::init()
 	pMenuItem->setPosition(winSize.width / 2, winSize.height / 2);
 
 	Menu* pMenu = Menu::create(pMenuItem, NULL);
-	pMenu->setPosition(CCPointZero);
+	pMenu->setPosition(Vec2::ZERO);
 	this->addChild(pMenu, 1);
 
 	LabelTTF* pLabel = LabelTTF::create("Bubble Cat 2014", "Arial", 24 * 3);
-	pLabel->setPosition(ccp(winSize.width / 2, winSize.height - 50));
+	Point labelPoint = Point(winSize.width / 2, winSize.height - 50);
+	pLabel->setPosition(labelPoint);
+	CCLOG("labelPoint x = %f, y = %f", labelPoint.x, labelPoint.y);
+
 	this->addChild(pLabel, 1);
 
 	Sprite* pSprite = Sprite::create("StartScene_CN.jpg");
-	pSprite->setPosition(ccp(winSize.width / 2, winSize.height / 2));
+	pSprite->setPosition(Point(winSize.width / 2, winSize.height / 2));
 	this->addChild(pSprite, 0);
 	return true;
 }
