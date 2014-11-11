@@ -67,6 +67,7 @@ bool GameLayer::initBoard()
 			// 
 			Point point = getPosByRowAndCol(row, col);
 			pBubble->setPosition(point.x, point.y);
+			//pBubble->convertToWorldSpace(pBubble->getPosition());
 			//pBubble->setPosition(100, 200);
 			//CCLOG(" point.x = %f, point.y = %f", point.x, point.y);
 
@@ -88,7 +89,7 @@ bool GameLayer::initReadyBubble()
 
 	Size size = Director::getInstance()->getWinSize();
 	m_curReady->setPosition(Vec2(size.width / 2, size.height / 10));
-
+	CCLOG("   curReady   point x = %f, point y = %f", m_curReady->getPosition().x, m_curReady->getPosition().y);
 	this->addChild(m_curReady);
 	return true;
 }
@@ -247,7 +248,9 @@ void GameLayer::onTouchEnded(Touch *pTouch, Event *pEvent)
 	m_state = GS_FLY;
 
 	Point pos = pTouch->getLocation();
-	m_real = ccpNormalize(ccpSub(pos, m_curReady->getPosition()));
+	pos.subtract(m_curReady->getPosition());
+	pos.normalize();
+	m_real = pos;
 
 	setDisableEnable();
 	this->scheduleUpdate();
@@ -268,7 +271,7 @@ void GameLayer::update(float delta)
 	}
 
 	Point pos = m_curReady->getPosition();
-	m_curReady->setPosition(Point(pos.x + m_real.x * BUBBLE_SPEED, pos.y + m_real.y * BUBBLE_SPEED));
+	m_curReady->setPosition(Vec2(pos.x + m_real.x * BUBBLE_SPEED, pos.y + m_real.y * BUBBLE_SPEED));
 
 	if (isCollision())	//如果和球或者上边缘碰撞了， 做相应的处理
 	{
@@ -571,7 +574,7 @@ void GameLayer::downBubbleAction(Bubble *pBubble)
 	Point pos = pBubble->getPosition();
 	pBubble->runAction(
 		Sequence::create(
-		MoveTo::create((pos.y - offY) / 600.0, ccp(pos.x, offY)),
+		MoveTo::create((pos.y - offY) / 600.0, Vec2(pos.x, offY)),
 		CallFuncN::create(this, callfuncN_selector(GameLayer::callbackRemoveBubble)),
 		NULL
 		)
