@@ -25,12 +25,12 @@ Point getPosByRowAndCol(int row, int col)
 {
 	float posX, posY;
 
-	Size size = Director::getInstance()->getWinSize();
+	Size size = Director::getInstance()->getVisibleSize();
 
 	posX = col * 2 * BUBBLE_RADIUS + BUBBLE_RADIUS + (row % 2) * BUBBLE_RADIUS;
 	posY = size.height - ( row * 2 * BUBBLE_RADIUS * sin(PI/3) + BUBBLE_RADIUS );
 
-	return Point(posX, posY);
+	return Vec2(posX, posY);
 }
 
 RowCol GetRowColByPos( int nPosX, int nPosY)
@@ -38,7 +38,7 @@ RowCol GetRowColByPos( int nPosX, int nPosY)
 	int nRow, nCol;
 	//需要四舍五入
 
-	nPosY = Director::getInstance()->getWinSize().height - nPosY;
+	nPosY = Director::getInstance()->getVisibleSize().height - nPosY;
 
 	nRow = ( nPosY -BUBBLE_RADIUS )/( 2 *BUBBLE_RADIUS *sin ( PI/3 ) ) +0.5;
 

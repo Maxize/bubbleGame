@@ -43,7 +43,7 @@ private:
 	bool isCollisionWithBorder();	//是否和左右边缘碰撞
 
 	bool isCollisionWithTopBorder(Bubble *pBubble);	//是否和顶层边缘碰撞，
-	bool isCollisionWithBubble(Point pos1, float radius1, Point pos2, float radius2);	//是否和上方的球碰撞
+	bool isCollisionWithBubble(Vec2 pos1, float radius1, Vec2 pos2, float radius2);	//是否和上方的球碰撞
 	bool isCollision();	//是否碰撞，仅包括是否和上方所有的球碰撞和顶层边缘碰撞， 不包括和左右边缘碰撞
 
 	void adjustBubblePosition();
@@ -54,16 +54,16 @@ private:
 	ROWCOL_LIST findSameBubble(Bubble *pReadyBubble);
 	//查找金银色球所对应的要消除的球的集合
 	ROWCOL_LIST findGoldenBubble(Bubble *pReadyBubble);
-	ROWCOL_LIST findSliveryBubble(Bubble* pReadyBubble);
+	ROWCOL_LIST findSliveryBubble(Bubble *pReadyBubble);
 
 	//根据调整过后的球的位置和颜色类型， 作出相应的处理，如：金银色特殊泡泡的爆炸，球的下落等
-	void execClearBubble(Bubble* pReadyBubble);
+	void execClearBubble(Bubble *pReadyBubble);
 
 	//清除球的集合
 	void clearBubble(const ROWCOL_LIST &bubbleList);
 
 	//清除一个球的表现动作
-	void removeBubbleAction(Bubble* pBubble);
+	void removeBubbleAction(Bubble *pBubble);
 	void callbackRemoveBubble(Node *obj);
 
 	ROWCOL_LIST checkFallBubble();
@@ -80,7 +80,7 @@ private:
 
 	inline bool hasBall(int row, int col)
 	{
-		return m_board[row][col] != NULL;
+		return m_board[row][col] != nullptr;
 	}
 
 private:
@@ -105,6 +105,6 @@ private:
 
 	GameState m_state;
 
-	Point m_real;
+	Vec2 m_real;
 };
 #endif

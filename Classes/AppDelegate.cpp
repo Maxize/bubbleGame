@@ -26,7 +26,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 		director->setOpenGLView(glview);
 	}
 
-	//glview->setDesignResolutionSize(480, 800, kResolutionShowAll);
+	//glview->setDesignResolutionSize(800, 480, ResolutionPolicy::SHOW_ALL);
 	glview->setDesignResolutionSize(768, 1280, ResolutionPolicy::SHOW_ALL);
 
 	
@@ -50,7 +50,7 @@ void AppDelegate::applicationDidEnterBackground()
 {
     Director::getInstance()->stopAnimation();
 
-    SimpleAudioEngine::sharedEngine()->pauseBackgroundMusic();
+    SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
 
 // this function will be called when the app is active again
@@ -58,5 +58,5 @@ void AppDelegate::applicationWillEnterForeground()
 {
 	Director::getInstance()->startAnimation();
 
-    SimpleAudioEngine::sharedEngine()->resumeBackgroundMusic();
+	SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }

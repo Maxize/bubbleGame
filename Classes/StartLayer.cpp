@@ -6,26 +6,24 @@ bool StartLayer::init()
 	if (!Layer::init()){
 		return false;
 	}
-	Size winSize = Director::getInstance()->getWinSize();
+	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	Label *label = Label::create("New Game", "Arial", 24 * 2);
+	auto label = Label::create("New Game", "Arial", 24 * 2);
 	MenuItemLabel *pMenuItem = MenuItemLabel::create(label, this, menu_selector(StartLayer::menuNewGameCallback));
 	pMenuItem->setTag(1);
-	pMenuItem->setPosition(winSize.width / 2, winSize.height / 2);
+	pMenuItem->setPosition(visibleSize.width / 2, visibleSize.height / 2);
 
 	Menu* pMenu = Menu::create(pMenuItem, NULL);
 	pMenu->setPosition(Vec2::ZERO);
 	this->addChild(pMenu, 1);
 
-	Label* pLabel = Label::create("Bubble Cat 2014", "Arial", 24 * 3);
-	Point labelPoint = Point(winSize.width / 2, winSize.height - 50);
-	pLabel->setPosition(labelPoint);
-	CCLOG("labelPoint x = %f, y = %f", labelPoint.x, labelPoint.y);
+	auto pLabel = Label::create("Bubble Cat 2014", "Arial", 24 * 3);
+	pLabel->setPosition(visibleSize.width / 2, visibleSize.height - 50);
 
 	this->addChild(pLabel, 1);
 
 	Sprite* pSprite = Sprite::create("StartScene_CN.jpg");
-	pSprite->setPosition(Point(winSize.width / 2, winSize.height / 2));
+	pSprite->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
 	this->addChild(pSprite, 0);
 	return true;
 }

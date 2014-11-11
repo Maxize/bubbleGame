@@ -9,7 +9,6 @@ m_nGoldenBubbleCount(0),
 m_nSliveryBubbleCount(0),
 m_nScore(0)
 {
-	CCLOG("-------------  GameLayer is ctor!");
 }
 
 GameLayer::~GameLayer()
@@ -19,14 +18,13 @@ GameLayer::~GameLayer()
 
 bool GameLayer::init()
 {
-	srand(time(NULL));
-
 	//加载背景
 	Sprite *background = Sprite::create("background1.jpg");
 	background->setAnchorPoint(Vec2::ZERO);
 	background->setPosition(Vec2::ZERO);
 	this->addChild(background);
-
+	Vec2 point = background->getPosition();
+	memset(m_board, 0, sizeof(Bubble*) * MAX_ROWS * MAX_COLS);
 	initScheduler();
 	initBoard();
 
@@ -54,27 +52,24 @@ bool GameLayer::initBoard()
 			//初始化前INIT_LINE行， 其他行为NULL
 			if (row >= INIT_LINE)
 			{
-				m_board[row][col] = NULL;
+				m_board[row][col] = nullptr;
 				continue;
 			}
 
 			Bubble* pBubble = randomBubble();
-			if (pBubble == NULL)
+			if (pBubble == nullptr)
 			{
 				CC_BREAK_IF(!pBubble);
 			}
-
-			// 
-			Point point = getPosByRowAndCol(row, col);
-			pBubble->setPosition(point.x, point.y);
-			//pBubble->convertToWorldSpace(pBubble->getPosition());
-			//pBubble->setPosition(100, 200);
-			//CCLOG(" point.x = %f, point.y = %f", point.x, point.y);
-
-			this->addChild(pBubble);
-
 			m_board[row][col] = pBubble;
-			m_board[row][col]->setRowColIndex(row, col);
+
+			Vec2 point = getPosByRowAndCol(row, col);
+			pBubble->setPosition(point.x, point.y);
+			//pBubble->setPosition(point.x+100, point.y/2);
+			CCLOG(" point.x = %f, point.y = %f", point.x, point.y);
+			pBubble->setRowColIndex(row, col);
+			this->addChild(pBubble);
+			// 添加一个球到 所有地图的缓存里面
 			m_listBubble.push_back(pBubble);
 
 		}
@@ -87,8 +82,9 @@ bool GameLayer::initReadyBubble()
 {
 	m_curReady = randomBubble();
 
-	Size size = Director::getInstance()->getWinSize();
+	Size size = Director::getInstance()->getVisibleSize();
 	m_curReady->setPosition(Vec2(size.width / 2, size.height / 10));
+	//m_curReady->convertToWorldSpace(m_curReady->getPosition());
 	CCLOG("   curReady   point x = %f, point y = %f", m_curReady->getPosition().x, m_curReady->getPosition().y);
 	this->addChild(m_curReady);
 	return true;
@@ -99,7 +95,7 @@ bool GameLayer::initWaitBubble()
 	for (int i = 0; i < MAX_WAIT_BUBBLE; i++)
 	{
 		Bubble *pBubble = randomBubble();
-		Size size = Director::getInstance()->getWinSize();
+		Size size = Director::getInstance()->getVisibleSize();
 		pBubble->setPosition(Vec2(size.width / 2 + (i + 1) * BUBBLE_RADIUS * 2, size.height / 20));
 		m_wait[i] = pBubble;
 		this->addChild(pBubble);
@@ -110,6 +106,7 @@ bool GameLayer::initWaitBubble()
 }
 Bubble* GameLayer::randomBubble()
 {
+	srand(time(0));
 	BUBBLE_COLOR color = static_cast<BUBBLE_COLOR>(rand() % (COLOR_COUNT/* - 2*/));
 	Bubble *pBubble = Bubble::create(g_bubbleName[color].c_str());
 	if (pBubble)
@@ -154,8 +151,8 @@ void GameLayer::clear()
 
 bool GameLayer::isCollisionWithBorder()	//是否和边缘碰撞
 {
-	Size size = Director::getInstance()->getWinSize();
-	Point pos = m_curReady->getPosition();
+	Size size = Director::getInstance()->getVisibleSize();
+	Vec2 pos = m_curReady->getPosition();
 
 	if (pos.x < BUBBLE_RADIUS || pos.x > size.width - BUBBLE_RADIUS)
 	{
@@ -167,13 +164,13 @@ bool GameLayer::isCollisionWithBorder()	//是否和边缘碰撞
 
 bool GameLayer::isCollisionWithTopBorder(Bubble *pBubble)
 {
-	if (pBubble == NULL)
+	if (pBubble == nullptr)
 	{
 		return false;
 	}
 
-	Point pos = pBubble->getPosition();
-	Size size = Director::getInstance()->getWinSize();
+	Vec2 pos = pBubble->getPosition();
+	Size size = Director::getInstance()->getVisibleSize();
 	if (pos.y > size.height - BUBBLE_RADIUS)
 	{
 		return true;
@@ -183,7 +180,7 @@ bool GameLayer::isCollisionWithTopBorder(Bubble *pBubble)
 
 }
 
-bool GameLayer::isCollisionWithBubble(Point pos1, float radius1, Point pos2, float radius2)	//是否和上方的球碰撞
+bool GameLayer::isCollisionWithBubble(Vec2 pos1, float radius1, Vec2 pos2, float radius2)	//是否和上方的球碰撞
 {
 	return pow(pos1.x - pos2.x, 2) + pow(pos1.y - pos2.y, 2) < pow(radius1 + radius2, 2);	//判断两圆是否相交, 公式：（x1-x2)^2 + (y1-y2)^2 < (r1 + r2)^2
 }
@@ -192,7 +189,7 @@ bool GameLayer::isCollision()
 {
 	bool bRet = false;
 
-	Size size = Director::getInstance()->getWinSize();
+	Size size = Director::getInstance()->getVisibleSize();
 	if (m_curReady->getPosition().y > size.height - BUBBLE_RADIUS)
 	{
 		bRet = true;
@@ -247,9 +244,10 @@ void GameLayer::onTouchEnded(Touch *pTouch, Event *pEvent)
 {
 	m_state = GS_FLY;
 
-	Point pos = pTouch->getLocation();
+	Vec2 pos = pTouch->getLocation();
 	pos.subtract(m_curReady->getPosition());
 	pos.normalize();
+	CCLOG(" m_real point x = %f, y = %f ", pos.x, pos.y);
 	m_real = pos;
 
 	setDisableEnable();
@@ -270,7 +268,7 @@ void GameLayer::update(float delta)
 		m_real.x = -m_real.x;
 	}
 
-	Point pos = m_curReady->getPosition();
+	Vec2 pos = m_curReady->getPosition();
 	m_curReady->setPosition(Vec2(pos.x + m_real.x * BUBBLE_SPEED, pos.y + m_real.y * BUBBLE_SPEED));
 
 	if (isCollision())	//如果和球或者上边缘碰撞了， 做相应的处理
@@ -294,11 +292,11 @@ void GameLayer::update(float delta)
 
 void GameLayer::adjustBubblePosition()
 {
-	Point curPos = m_curReady->getPosition();
+	Vec2 curPos = m_curReady->getPosition();
 
 	RowCol rowcol_index = GetRowColByPos(curPos.x, curPos.y);
 
-	Point adjustPos = getPosByRowAndCol(rowcol_index.m_nRow, rowcol_index.m_nCol);
+	Vec2 adjustPos = getPosByRowAndCol(rowcol_index.m_nRow, rowcol_index.m_nCol);
 	m_curReady->setPosition(adjustPos);
 	m_curReady->setRowColIndex(rowcol_index.m_nRow, rowcol_index.m_nCol);
 
@@ -312,16 +310,16 @@ void GameLayer::changeWaitToReady()
 	m_curReady = m_wait[0];
 	m_curReady->setPosition(READY_BUBBLE_POS);
 
-	Size size = Director::getInstance()->getWinSize();
+	Size size = Director::getInstance()->getVisibleSize();
 
 	for (int index = 0; index < MAX_WAIT_BUBBLE - 1; index++)
 	{
 		m_wait[index] = m_wait[index + 1];
-		m_wait[index]->setPosition(Point(size.width / 2 + (index + 1) * BUBBLE_RADIUS * 2, size.height / 20));
+		m_wait[index]->setPosition(Vec2(size.width / 2 + (index + 1) * BUBBLE_RADIUS * 2, size.height / 20));
 	}
 
 	m_wait[MAX_WAIT_BUBBLE - 1] = randomBubble();
-	m_wait[MAX_WAIT_BUBBLE - 1]->setPosition(Point(size.width / 2 + MAX_WAIT_BUBBLE * BUBBLE_RADIUS * 2, size.height / 20));
+	m_wait[MAX_WAIT_BUBBLE - 1]->setPosition(Vec2(size.width / 2 + MAX_WAIT_BUBBLE * BUBBLE_RADIUS * 2, size.height / 20));
 
 	this->addChild(m_wait[MAX_WAIT_BUBBLE - 1]);
 }
@@ -329,7 +327,7 @@ void GameLayer::changeWaitToReady()
 ROWCOL_LIST GameLayer::findClearBubble(Bubble *pReadyBubble)
 {
 	ROWCOL_LIST clearRowCollist;
-	if (pReadyBubble == NULL)
+	if (pReadyBubble == nullptr)
 	{
 		return clearRowCollist;
 	}
@@ -451,7 +449,7 @@ void GameLayer::clearBubble(const ROWCOL_LIST &bubbleList)
 		if (obj)
 		{
 			removeBubbleAction(obj);
-			m_board[nRow][nCol] = NULL;
+			m_board[nRow][nCol] = nullptr;
 		}
 
 		BUBBLE_LIST::iterator itFind = std::find(m_listBubble.begin(), m_listBubble.end(), obj);
@@ -469,15 +467,15 @@ void GameLayer::removeBubbleAction(Bubble* pBubble)
 		Sequence::create(
 		DelayTime::create(0.2f),
 		FadeOut::create(0.5f),
-		CallFuncN::create(this, callfuncN_selector(GameLayer::callbackRemoveBubble)),
-		NULL
+		CallFuncN::create(CC_CALLBACK_1(GameLayer::callbackRemoveBubble, this)),
+		nullptr
 		)
 		);
 }
 
 void GameLayer::callbackRemoveBubble(Node *obj)
 {
-	if (obj != NULL)
+	if (obj != nullptr)
 	{
 		this->removeChild(obj, true);
 		obj->autorelease();
@@ -490,7 +488,7 @@ ROWCOL_LIST GameLayer::checkFallBubble()
 
 	for (int i = 0; i < MAX_COLS; i++)
 	{
-		if (m_board[0][i] != NULL)
+		if (m_board[0][i] != nullptr)
 		{
 			LinkBubbleList.push_back(RowCol(0, i));
 		}
@@ -530,7 +528,7 @@ ROWCOL_LIST GameLayer::checkFallBubble()
 	{
 		for (int j = 0; j < MAX_COLS - i % 2; j++)
 		{
-			if (m_board[i][j] != NULL)
+			if (m_board[i][j] != nullptr)
 			{
 				RowCol findRowCol(i, j);
 				ROWCOL_LIST::iterator itFind = std::find(LinkBubbleList.begin(), LinkBubbleList.end(), findRowCol);
@@ -551,7 +549,7 @@ void GameLayer::FallBubble(const ROWCOL_LIST &fallBubbleList)
 	for (ROWCOL_LIST::const_iterator iter = fallBubbleList.begin(); iter != fallBubbleList.end(); iter++)
 	{
 		Bubble *pBubble = m_board[iter->m_nRow][iter->m_nCol];
-		if (pBubble != NULL)
+		if (pBubble != nullptr)
 		{
 			downBubbleAction(pBubble);
 
@@ -559,7 +557,7 @@ void GameLayer::FallBubble(const ROWCOL_LIST &fallBubbleList)
 			if (iterBubble != m_listBubble.end())
 			{
 				m_listBubble.erase(iterBubble);
-				m_board[iter->m_nRow][iter->m_nCol] = NULL;
+				m_board[iter->m_nRow][iter->m_nCol] = nullptr;
 			}
 		}
 	}
@@ -571,12 +569,12 @@ void GameLayer::downBubbleAction(Bubble *pBubble)
 {
 	float offY = -100;
 
-	Point pos = pBubble->getPosition();
+	Vec2 pos = pBubble->getPosition();
 	pBubble->runAction(
 		Sequence::create(
 		MoveTo::create((pos.y - offY) / 600.0, Vec2(pos.x, offY)),
-		CallFuncN::create(this, callfuncN_selector(GameLayer::callbackRemoveBubble)),
-		NULL
+		CallFuncN::create(CC_CALLBACK_1(GameLayer::callbackRemoveBubble, this)),
+		nullptr
 		)
 		);
 }
