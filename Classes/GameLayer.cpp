@@ -13,17 +13,18 @@ m_nScore(0)
 
 GameLayer::~GameLayer()
 {
-	//clear();
+	clear();
 }
 
 bool GameLayer::init()
 {
+	Size visibleSize = Director::getInstance()->getVisibleSize();
 	//¼ÓÔØ±³¾°
 	Sprite *background = Sprite::create("background1.jpg");
-	background->setAnchorPoint(Vec2::ZERO);
-	background->setPosition(Vec2::ZERO);
-	this->addChild(background);
-	Vec2 point = background->getPosition();
+	//background->setAnchorPoint(Vec2::ZERO);
+	background->setPosition(visibleSize.width/2, visibleSize.height/2);
+	this->addChild(background, -1);
+	//Vec2 point = background->getPosition();
 	memset(m_board, 0, sizeof(Bubble*) * MAX_ROWS * MAX_COLS);
 	initScheduler();
 	initBoard();
@@ -62,7 +63,7 @@ bool GameLayer::initBoard()
 				CC_BREAK_IF(!pBubble);
 			}
 			m_board[row][col] = pBubble;
-
+			m_board[row][col]->retain();
 			Vec2 point = getPosByRowAndCol(row, col);
 			pBubble->setPosition(point.x, point.y);
 			//pBubble->setPosition(point.x+100, point.y/2);
@@ -73,6 +74,7 @@ bool GameLayer::initBoard()
 			m_listBubble.push_back(pBubble);
 
 		}
+		
 	}
 	return true;
 }
@@ -94,11 +96,12 @@ bool GameLayer::initWaitBubble()
 {
 	for (int i = 0; i < MAX_WAIT_BUBBLE; i++)
 	{
-		Bubble *pBubble = randomBubble();
+		m_wait[i] = randomBubble();
 		Size size = Director::getInstance()->getVisibleSize();
-		pBubble->setPosition(Vec2(size.width / 2 + (i + 1) * BUBBLE_RADIUS * 2, size.height / 20));
-		m_wait[i] = pBubble;
-		this->addChild(pBubble);
+		m_wait[i]->setPosition(Vec2(size.width / 2 + (i + 1) * BUBBLE_RADIUS * 2, size.height / 20));
+		 //= pBubble;
+		CCLOG("   m_wait[%d]    x = %f,  y = %f", i, m_wait[i]->getPosition().x, m_wait[i]->getPosition().y);
+		this->addChild(m_wait[i]);
 
 	}
 	return true;
@@ -142,7 +145,9 @@ void GameLayer::clear()
 	{
 		for (int nCol = 0; nCol < MAX_COLS - nRow % 2; nCol++)
 		{
-			CC_SAFE_DELETE(m_board[nRow][nCol]);
+			m_board[nRow][nCol] = nullptr;
+			m_board[nRow][nCol]->removeFromParentAndCleanup(true);
+			m_board[nRow][nCol]->release();
 		}
 	}
 
@@ -477,8 +482,9 @@ void GameLayer::callbackRemoveBubble(Node *obj)
 {
 	if (obj != nullptr)
 	{
-		this->removeChild(obj, true);
-		obj->autorelease();
+		obj->removeFromParentAndCleanup(true);
+		//this->removeChild(obj, true);
+		//obj->autorelease();
 	}
 }
 
@@ -558,6 +564,7 @@ void GameLayer::FallBubble(const ROWCOL_LIST &fallBubbleList)
 			{
 				m_listBubble.erase(iterBubble);
 				m_board[iter->m_nRow][iter->m_nCol] = nullptr;
+				//pBubble->removeFromParentAndCleanup(true);
 			}
 		}
 	}

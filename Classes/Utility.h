@@ -10,7 +10,7 @@
 
 using namespace cocos2d;
 
-inline Point getPosByRowAndCol(int row, int col);
+inline Vec2 getPosByRowAndCol(int row, int col);
 inline RowCol GetRowColByPos( int nPosX, int nPosY);
 
 inline bool IsValidPos( int nRow, int nCol );
@@ -21,7 +21,7 @@ inline void GetAround( int nRow, int nCol, std::vector<RowCol> & vecRowCol );
 inline void GetGoldenLine (int nRow, int nCol, ROWCOL_LIST& listRowCol);
 inline void GetSliveryLine(int nRow, int nCol, ROWCOL_LIST& listRowCol);
 
-Point getPosByRowAndCol(int row, int col)
+Vec2 getPosByRowAndCol(int row, int col)
 {
 	float posX, posY;
 

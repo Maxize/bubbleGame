@@ -29,7 +29,7 @@ public:
 	void onTouchMoved(Touch *pTouch, Event *pEvent);
 	void onTouchEnded(Touch *pTouch, Event *pEvent);
 
-private:
+//private:
 	Bubble* randomBubble();
 	Bubble* createBubble(BUBBLE_COLOR color);
 
