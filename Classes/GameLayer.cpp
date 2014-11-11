@@ -87,7 +87,7 @@ bool GameLayer::initReadyBubble()
 	m_curReady = randomBubble();
 
 	Size size = Director::getInstance()->getWinSize();
-	m_curReady->setPosition(Point(size.width / 2, size.height / 10));
+	m_curReady->setPosition(Vec2(size.width / 2, size.height / 10));
 
 	this->addChild(m_curReady);
 	return true;
@@ -99,7 +99,7 @@ bool GameLayer::initWaitBubble()
 	{
 		Bubble *pBubble = randomBubble();
 		Size size = Director::getInstance()->getWinSize();
-		pBubble->setPosition(Point(size.width / 2 + (i + 1) * BUBBLE_RADIUS * 2, size.height / 20));
+		pBubble->setPosition(Vec2(size.width / 2 + (i + 1) * BUBBLE_RADIUS * 2, size.height / 20));
 		m_wait[i] = pBubble;
 		this->addChild(pBubble);
 

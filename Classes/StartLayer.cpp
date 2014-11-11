@@ -8,7 +8,7 @@ bool StartLayer::init()
 	}
 	Size winSize = Director::getInstance()->getWinSize();
 
-	LabelTTF *label = LabelTTF::create("New Game", "Arial", 24 * 2);
+	Label *label = Label::create("New Game", "Arial", 24 * 2);
 	MenuItemLabel *pMenuItem = MenuItemLabel::create(label, this, menu_selector(StartLayer::menuNewGameCallback));
 	pMenuItem->setTag(1);
 	pMenuItem->setPosition(winSize.width / 2, winSize.height / 2);
@@ -17,7 +17,7 @@ bool StartLayer::init()
 	pMenu->setPosition(Vec2::ZERO);
 	this->addChild(pMenu, 1);
 
-	LabelTTF* pLabel = LabelTTF::create("Bubble Cat 2014", "Arial", 24 * 3);
+	Label* pLabel = Label::create("Bubble Cat 2014", "Arial", 24 * 3);
 	Point labelPoint = Point(winSize.width / 2, winSize.height - 50);
 	pLabel->setPosition(labelPoint);
 	CCLOG("labelPoint x = %f, y = %f", labelPoint.x, labelPoint.y);
