@@ -1,7 +1,8 @@
 #include "GameScene.h"
 #include "GameLayer.h"
+#include "SimpleAudioEngine.h"
 
-
+using namespace CocosDenshion;
 
 bool GameScene::init(){
 	if (!Scene::init()){

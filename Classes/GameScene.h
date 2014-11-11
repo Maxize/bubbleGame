@@ -22,10 +22,7 @@
 #define _GAME_SCENE_H_
 
 #include "cocos2d.h"
-#include "SimpleAudioEngine.h"
-
 using namespace cocos2d;
-using namespace CocosDenshion;
 
 class GameScene : public Scene{
 public:
