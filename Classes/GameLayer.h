@@ -30,11 +30,10 @@ public:
 	void onTouchEnded(Touch *pTouch, Event *pEvent);
 
 //private:
-	Bubble* randomBubble();
-	Bubble* createBubble(BUBBLE_COLOR color);
+	
 
 	void clear();
-
+	bool initTestSprite();
 	bool initScheduler();
 	bool initReadyBubble();
 	bool initBoard();
@@ -47,6 +46,9 @@ public:
 	bool isCollision();	//是否碰撞，仅包括是否和上方所有的球碰撞和顶层边缘碰撞， 不包括和左右边缘碰撞
 
 	void adjustBubblePosition();
+
+	Bubble* randomBubble();
+	Bubble* createBubble(int color);
 
 	//查找需要清除的球的集合
 	ROWCOL_LIST findClearBubble(Bubble *pReadyBubble);

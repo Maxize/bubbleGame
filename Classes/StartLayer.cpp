@@ -23,7 +23,7 @@ bool StartLayer::init()
 	this->addChild(pLabel, 1);
 
 	Sprite* pSprite = Sprite::create("StartScene_CN.jpg");
-	pSprite->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
+	pSprite->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 	this->addChild(pSprite, 0);
 	return true;
 }

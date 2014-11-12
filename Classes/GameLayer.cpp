@@ -18,6 +18,7 @@ GameLayer::~GameLayer()
 
 bool GameLayer::init()
 {
+
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	//加载背景
 	Sprite *background = Sprite::create("background1.jpg");
@@ -27,7 +28,9 @@ bool GameLayer::init()
 	//Vec2 point = background->getPosition();
 	memset(m_board, 0, sizeof(Bubble*) * MAX_ROWS * MAX_COLS);
 	initScheduler();
+	//initTestSprite(); 
 	initBoard();
+	
 
 	initReadyBubble();
 	initWaitBubble();
@@ -43,9 +46,43 @@ bool GameLayer::initScheduler()
 	return true;
 }
 
+bool GameLayer::initTestSprite()
+{
+	srand(time(0));
+	//for (int i = 1; i < 11; i++)
+	//{
+	//	//int color = abs(rand() % COLOR_COUNT);
+	//	int color = static_cast<BUBBLE_COLOR>(rand() % (COLOR_COUNT));
+	//	if (color < 0)
+	//		CCLOG("color i =%d", i);
+	//	//auto bubble = Bubble::create(color);
+	//	auto bubble = randomBubble();
+	//	if (bubble == nullptr)
+	//	{
+	//		CC_BREAK_IF(!bubble);
+	//	}
+	//	bubble->setPosition(i*65,i*65);
+	//	this->addChild(bubble);
+	//}
+	Label* abc = Label::create("abc---------","Arial", 24 * 2);
+	abc->setPosition(640,881);
+	this->addChild(abc);
+	int color = static_cast<BUBBLE_COLOR>(rand() % (COLOR_COUNT));
+
+	auto bubble = randomBubble();
+	if (bubble == nullptr)
+	{
+		return false;
+	}
+	bubble->setPosition(640, 881);
+	this->addChild(bubble);
+	return true;
+}
+
 //初始化泡泡队列，
 bool GameLayer::initBoard()
 {
+	srand(time(0));
 	for (int row = 0; row < MAX_ROWS; row++)
 	{
 		for (int col = 0; col < MAX_COLS - row % 2; col++)
@@ -56,20 +93,23 @@ bool GameLayer::initBoard()
 				m_board[row][col] = nullptr;
 				continue;
 			}
-
-			Bubble* pBubble = randomBubble();
+			int color = static_cast<BUBBLE_COLOR>(rand() % (COLOR_COUNT));
+			if (color < 0)
+				CCLOG("color row=%d,col=%d", row, col);
+			auto pBubble = Bubble::create(color);
 			if (pBubble == nullptr)
 			{
 				CC_BREAK_IF(!pBubble);
 			}
 			m_board[row][col] = pBubble;
-			m_board[row][col]->retain();
+			//m_board[row][col]->retain();
 			Vec2 point = getPosByRowAndCol(row, col);
-			pBubble->setPosition(point.x, point.y);
-			//pBubble->setPosition(point.x+100, point.y/2);
-			CCLOG(" point.x = %f, point.y = %f", point.x, point.y);
+			pBubble->setAnchorPoint(Vec2(0,0));
+			pBubble->setPosition(point.x, point.y-200);
+			//CCLOG(" point.x = %f, point.y = %f", point.x, point.y - 200);
 			pBubble->setRowColIndex(row, col);
 			this->addChild(pBubble);
+
 			// 添加一个球到 所有地图的缓存里面
 			m_listBubble.push_back(pBubble);
 
@@ -109,14 +149,12 @@ bool GameLayer::initWaitBubble()
 }
 Bubble* GameLayer::randomBubble()
 {
-	srand(time(0));
-	BUBBLE_COLOR color = static_cast<BUBBLE_COLOR>(rand() % (COLOR_COUNT/* - 2*/));
-	Bubble *pBubble = Bubble::create(g_bubbleName[color].c_str());
-	if (pBubble)
-	{
-		pBubble->setBubbleColor(color);
-	}
-	else
+	//srand(time(0));
+
+	int color = abs(rand() % COLOR_COUNT);
+	//static_cast<BUBBLE_COLOR>(rand() % (COLOR_COUNT/* - 2*/));
+	Bubble *pBubble = Bubble::create(color);
+	if (pBubble == nullptr)
 	{
 		CC_SAFE_DELETE(pBubble);
 	}
@@ -124,9 +162,9 @@ Bubble* GameLayer::randomBubble()
 
 }
 
-Bubble* GameLayer::createBubble(BUBBLE_COLOR color)
+Bubble* GameLayer::createBubble(int color)
 {
-	Bubble *pBubble = Bubble::create(g_bubbleName[color].c_str());
+	Bubble *pBubble = Bubble::create(color);
 	if (pBubble)
 	{
 		pBubble->setBubbleColor(color);
@@ -145,9 +183,13 @@ void GameLayer::clear()
 	{
 		for (int nCol = 0; nCol < MAX_COLS - nRow % 2; nCol++)
 		{
-			m_board[nRow][nCol] = nullptr;
-			m_board[nRow][nCol]->removeFromParentAndCleanup(true);
-			m_board[nRow][nCol]->release();
+			if (m_board[nRow][nCol] != nullptr)
+			{
+				m_board[nRow][nCol]->removeFromParentAndCleanup(true);
+				m_board[nRow][nCol] = nullptr;
+				m_board[nRow][nCol]->release();
+			}
+			
 		}
 	}
 
@@ -247,7 +289,7 @@ void GameLayer::onTouchMoved(Touch *pTouch, Event *pEvent)
 
 void GameLayer::onTouchEnded(Touch *pTouch, Event *pEvent)
 {
-	m_state = GS_FLY;
+	/*m_state = GS_FLY;
 
 	Vec2 pos = pTouch->getLocation();
 	pos.subtract(m_curReady->getPosition());
@@ -256,7 +298,7 @@ void GameLayer::onTouchEnded(Touch *pTouch, Event *pEvent)
 	m_real = pos;
 
 	setDisableEnable();
-	this->scheduleUpdate();
+	this->scheduleUpdate();*/
 }
 
 void GameLayer::loop(float dt)
@@ -364,7 +406,7 @@ ROWCOL_LIST GameLayer::findClearBubble(Bubble *pReadyBubble)
 ROWCOL_LIST GameLayer::findSameBubble(Bubble *pReadyBubble)
 {
 	ROWCOL_LIST samelist;
-	BUBBLE_COLOR nColor = pReadyBubble->getBubbleColor();
+	int nColor = pReadyBubble->getBubbleColor();
 	int nRow = pReadyBubble->getRowIndex();
 	int nCol = pReadyBubble->getColumnIndex();
 	samelist.push_back(RowCol(nRow, nCol));

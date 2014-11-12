@@ -22,18 +22,18 @@
 
 using namespace cocos2d;
 
-class Bubble : public cocos2d::Sprite
+class Bubble : public Sprite
 {
 public:
 	Bubble();
 	~Bubble();
 
 public:
-	static Bubble* create(const std::string &spritefilename);
+	static Bubble* create(int color);
 
 public:
-	void setBubbleColor(BUBBLE_COLOR Color);
-	BUBBLE_COLOR getBubbleColor();
+	void setBubbleColor(int Color);
+	int getBubbleColor();
 
 	void setRowIndex(int row);
 	int getRowIndex();
@@ -47,14 +47,16 @@ public:
 		m_nColIndex = col;
 	}
 
-	BUBBLE_COLOR randomColor();		//随机生成一种颜色
+	//BUBBLE_COLOR randomColor();		//随机生成一种颜色
 	
+private:
+	char* getImage(int color);
 
 private:
 	//泡泡所有位置的行和列
 	int m_nRowIndex;
 	int m_nColIndex;
 
-	BUBBLE_COLOR m_color;
+	int m_color;
 };
 #endif	//_BUBBLE_H_
