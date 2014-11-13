@@ -22,13 +22,12 @@ bool GameLayer::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	//加载背景
 	Sprite *background = Sprite::create("background1.jpg");
-	//background->setAnchorPoint(Vec2::ZERO);
-	background->setPosition(visibleSize.width/2, visibleSize.height/2);
+	background->setAnchorPoint(Vec2::ZERO);
+	background->setPosition(Vec2::ZERO);
 	this->addChild(background, -1);
 	//Vec2 point = background->getPosition();
 	memset(m_board, 0, sizeof(Bubble*) * MAX_ROWS * MAX_COLS);
 	initScheduler();
-	//initTestSprite(); 
 	initBoard();
 	
 
@@ -46,39 +45,6 @@ bool GameLayer::initScheduler()
 	return true;
 }
 
-bool GameLayer::initTestSprite()
-{
-	srand(time(0));
-	//for (int i = 1; i < 11; i++)
-	//{
-	//	//int color = abs(rand() % COLOR_COUNT);
-	//	int color = static_cast<BUBBLE_COLOR>(rand() % (COLOR_COUNT));
-	//	if (color < 0)
-	//		CCLOG("color i =%d", i);
-	//	//auto bubble = Bubble::create(color);
-	//	auto bubble = randomBubble();
-	//	if (bubble == nullptr)
-	//	{
-	//		CC_BREAK_IF(!bubble);
-	//	}
-	//	bubble->setPosition(i*65,i*65);
-	//	this->addChild(bubble);
-	//}
-	Label* abc = Label::create("abc---------","Arial", 24 * 2);
-	abc->setPosition(640,881);
-	this->addChild(abc);
-	int color = static_cast<BUBBLE_COLOR>(rand() % (COLOR_COUNT));
-
-	auto bubble = randomBubble();
-	if (bubble == nullptr)
-	{
-		return false;
-	}
-	bubble->setPosition(640, 881);
-	this->addChild(bubble);
-	return true;
-}
-
 //初始化泡泡队列，
 bool GameLayer::initBoard()
 {
@@ -93,10 +59,7 @@ bool GameLayer::initBoard()
 				m_board[row][col] = nullptr;
 				continue;
 			}
-			int color = static_cast<BUBBLE_COLOR>(rand() % (COLOR_COUNT));
-			if (color < 0)
-				CCLOG("color row=%d,col=%d", row, col);
-			auto pBubble = Bubble::create(color);
+			auto pBubble = randomBubble();
 			if (pBubble == nullptr)
 			{
 				CC_BREAK_IF(!pBubble);
@@ -104,8 +67,7 @@ bool GameLayer::initBoard()
 			m_board[row][col] = pBubble;
 			//m_board[row][col]->retain();
 			Vec2 point = getPosByRowAndCol(row, col);
-			pBubble->setAnchorPoint(Vec2(0,0));
-			pBubble->setPosition(point.x, point.y-200);
+			pBubble->setPosition(point.x, point.y);
 			//CCLOG(" point.x = %f, point.y = %f", point.x, point.y - 200);
 			pBubble->setRowColIndex(row, col);
 			this->addChild(pBubble);
@@ -187,7 +149,7 @@ void GameLayer::clear()
 			{
 				m_board[nRow][nCol]->removeFromParentAndCleanup(true);
 				m_board[nRow][nCol] = nullptr;
-				m_board[nRow][nCol]->release();
+				//m_board[nRow][nCol]->release();
 			}
 			
 		}
@@ -289,7 +251,7 @@ void GameLayer::onTouchMoved(Touch *pTouch, Event *pEvent)
 
 void GameLayer::onTouchEnded(Touch *pTouch, Event *pEvent)
 {
-	/*m_state = GS_FLY;
+	m_state = GS_FLY;
 
 	Vec2 pos = pTouch->getLocation();
 	pos.subtract(m_curReady->getPosition());
@@ -298,7 +260,7 @@ void GameLayer::onTouchEnded(Touch *pTouch, Event *pEvent)
 	m_real = pos;
 
 	setDisableEnable();
-	this->scheduleUpdate();*/
+	this->scheduleUpdate();
 }
 
 void GameLayer::loop(float dt)

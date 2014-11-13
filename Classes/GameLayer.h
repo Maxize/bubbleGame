@@ -33,7 +33,6 @@ public:
 	
 
 	void clear();
-	bool initTestSprite();
 	bool initScheduler();
 	bool initReadyBubble();
 	bool initBoard();

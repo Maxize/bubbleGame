@@ -8,7 +8,7 @@ bool StartLayer::init()
 	}
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
-	auto label = Label::create("New Game", "Arial", 24 * 2);
+	auto label = Label::createWithSystemFont("New Game", "Arial", 24 * 2);
 	MenuItemLabel *pMenuItem = MenuItemLabel::create(label, this, menu_selector(StartLayer::menuNewGameCallback));
 	pMenuItem->setTag(1);
 	pMenuItem->setPosition(visibleSize.width / 2, visibleSize.height / 2);
@@ -17,8 +17,8 @@ bool StartLayer::init()
 	pMenu->setPosition(Vec2::ZERO);
 	this->addChild(pMenu, 1);
 
-	auto pLabel = Label::create("Bubble Cat 2014", "Arial", 24 * 3);
-	pLabel->setPosition(visibleSize.width / 2, visibleSize.height - 50);
+	auto pLabel = Label::createWithSystemFont("Bubble Cat 2014", "Arial", 24 * 3);
+	pLabel->setPosition(visibleSize.width / 2, visibleSize.height - 80);
 
 	this->addChild(pLabel, 1);
 
