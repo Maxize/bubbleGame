@@ -44,6 +44,8 @@ public:
 	bool isCollisionWithBubble(Vec2 pos1, float radius1, Vec2 pos2, float radius2);	//是否和上方的球碰撞
 	bool isCollision();	//是否碰撞，仅包括是否和上方所有的球碰撞和顶层边缘碰撞， 不包括和左右边缘碰撞
 
+	bool isGameOver(); // 判断是否游戏结束
+
 	void adjustBubblePosition();
 
 	Bubble* randomBubble();

@@ -219,6 +219,18 @@ bool GameLayer::isCollision()
 
 }
 
+bool GameLayer::isGameOver()
+{
+	bool bRet = false;
+	auto lastBubble = m_listBubble.back();
+	if (lastBubble->getPosition().y < m_curReady->getPosition().y)
+	{
+		bRet = true;
+		return bRet;
+	}
+	return bRet;
+}
+
 void GameLayer::setEnable()
 {
 	//Director::getInstance()->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
@@ -271,6 +283,13 @@ void GameLayer::loop(float dt)
 void GameLayer::update(float delta)
 {
 	//CCLOG("GameLayer is update all the time! ---------------");
+
+	if (isGameOver)
+	{
+		CCLOG("  ---------  Game is over !!!");
+
+		return;
+	}
 
 	if (isCollisionWithBorder())
 	{
