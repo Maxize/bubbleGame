@@ -18,19 +18,16 @@ GameLayer::~GameLayer()
 
 bool GameLayer::init()
 {
-
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	//加载背景
 	Sprite *background = Sprite::create("background1.jpg");
 	background->setAnchorPoint(Vec2::ZERO);
 	background->setPosition(Vec2::ZERO);
 	this->addChild(background, -1);
-	//Vec2 point = background->getPosition();
 	memset(m_board, 0, sizeof(Bubble*) * MAX_ROWS * MAX_COLS);
 	initScheduler();
+	initGameOverLayer();
 	initBoard();
-	
-
 	initReadyBubble();
 	initWaitBubble();
 
@@ -42,6 +39,14 @@ bool GameLayer::initScheduler()
 {
 	//this->schedule(schedule_selector(GameLayer::loop), 1.0f);
 	//this->scheduleUpdate();
+	return true;
+}
+
+bool GameLayer::initGameOverLayer()
+{
+	/*m_gameOverLayer = GameOverLayer::create();
+	m_gameOverLayer->setVisible(false);
+	this->addChild(m_gameOverLayer);*/
 	return true;
 }
 
@@ -65,18 +70,14 @@ bool GameLayer::initBoard()
 				CC_BREAK_IF(!pBubble);
 			}
 			m_board[row][col] = pBubble;
-			//m_board[row][col]->retain();
 			Vec2 point = getPosByRowAndCol(row, col);
 			pBubble->setPosition(point.x, point.y);
 			//CCLOG(" point.x = %f, point.y = %f", point.x, point.y - 200);
 			pBubble->setRowColIndex(row, col);
 			this->addChild(pBubble);
-
 			// 添加一个球到 所有地图的缓存里面
 			m_listBubble.push_back(pBubble);
-
 		}
-		
 	}
 	return true;
 }
@@ -88,7 +89,6 @@ bool GameLayer::initReadyBubble()
 
 	Size size = Director::getInstance()->getVisibleSize();
 	m_curReady->setPosition(Vec2(size.width / 2, size.height / 10));
-	//m_curReady->convertToWorldSpace(m_curReady->getPosition());
 	CCLOG("   curReady   point x = %f, point y = %f", m_curReady->getPosition().x, m_curReady->getPosition().y);
 	this->addChild(m_curReady);
 	return true;
@@ -101,7 +101,6 @@ bool GameLayer::initWaitBubble()
 		m_wait[i] = randomBubble();
 		Size size = Director::getInstance()->getVisibleSize();
 		m_wait[i]->setPosition(Vec2(size.width / 2 + (i + 1) * BUBBLE_RADIUS * 2, size.height / 20));
-		 //= pBubble;
 		CCLOG("   m_wait[%d]    x = %f,  y = %f", i, m_wait[i]->getPosition().x, m_wait[i]->getPosition().y);
 		this->addChild(m_wait[i]);
 
@@ -111,8 +110,6 @@ bool GameLayer::initWaitBubble()
 }
 Bubble* GameLayer::randomBubble()
 {
-	//srand(time(0));
-
 	int color = abs(rand() % COLOR_COUNT);
 	//static_cast<BUBBLE_COLOR>(rand() % (COLOR_COUNT/* - 2*/));
 	Bubble *pBubble = Bubble::create(color);
@@ -233,7 +230,6 @@ bool GameLayer::isGameOver()
 
 void GameLayer::setEnable()
 {
-	//Director::getInstance()->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
 	// Register Touch Event
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->setSwallowTouches(true);
@@ -248,7 +244,6 @@ void GameLayer::setEnable()
 void GameLayer::setDisableEnable()
 {
 	_eventDispatcher->pauseEventListenersForTarget(this, true);
-	//Director::getInstance()->getTouchDispatcher()->removeDelegate(this);
 }
 
 bool GameLayer::onTouchBegan(Touch *pTouch, Event *pEvent)
@@ -282,12 +277,10 @@ void GameLayer::loop(float dt)
 
 void GameLayer::update(float delta)
 {
-	//CCLOG("GameLayer is update all the time! ---------------");
-
-	if (isGameOver)
+	if (isGameOver())
 	{
 		CCLOG("  ---------  Game is over !!!");
-
+		//m_gameOverLayer:setVisible(true);
 		return;
 	}
 
@@ -398,7 +391,6 @@ ROWCOL_LIST GameLayer::findSameBubble(Bubble *pReadyBubble)
 	do
 	{
 		std::vector<RowCol> vecRowCol;
-
 		GetAround(itCur->m_nRow, itCur->m_nCol, vecRowCol);
 
 		for (size_t i = 0; i < vecRowCol.size(); i++)

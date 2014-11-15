@@ -6,7 +6,6 @@ class StartLayer : public Layer{
 public:
 	virtual bool init();
 	CREATE_FUNC(StartLayer);
-	void startGame();
 
 	// a selector callback
 	void menuCloseCallback(Ref* pSender);

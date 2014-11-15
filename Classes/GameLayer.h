@@ -3,6 +3,7 @@
 #include "cocos2d.h"
 #include "Bubble.h"
 #include "BubbleConstant.h"
+//#include "GameOverLayer.h"
 
 #include <list>
 #include <vector>
@@ -33,6 +34,7 @@ public:
 	
 
 	void clear();
+	bool initGameOverLayer();
 	bool initScheduler();
 	bool initReadyBubble();
 	bool initBoard();
@@ -107,6 +109,8 @@ private:
 	int m_nSliveryBubbleCount;
 
 	GameState m_state;
+
+	//GameOverLayer* m_gameOverLayer;
 
 	Vec2 m_real;
 };

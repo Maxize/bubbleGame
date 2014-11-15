@@ -22,11 +22,20 @@
 #define _GAME_SCENE_H_
 
 #include "cocos2d.h"
+#include "GameOverLayer.h"
+#include "GameLayer.h"
+
 using namespace cocos2d;
 
 class GameScene : public Scene{
 public:
 	virtual bool init();
 	CREATE_FUNC(GameScene);
+
+	GameOverLayer* createGameOverLayer();
+private:
+	GameOverLayer* m_gameOverLayer;
+	GameLayer* m_gameLayer;
+
 };
 #endif
