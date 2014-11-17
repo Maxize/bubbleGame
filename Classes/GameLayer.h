@@ -3,7 +3,7 @@
 #include "cocos2d.h"
 #include "Bubble.h"
 #include "BubbleConstant.h"
-//#include "GameOverLayer.h"
+#include "GameOverLayer.h"
 
 #include <list>
 #include <vector>
@@ -110,7 +110,7 @@ private:
 
 	GameState m_state;
 
-	//GameOverLayer* m_gameOverLayer;
+	GameOverLayer* m_gameOverLayer;
 
 	Vec2 m_real;
 };

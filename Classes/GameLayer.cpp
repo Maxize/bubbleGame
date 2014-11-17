@@ -44,9 +44,9 @@ bool GameLayer::initScheduler()
 
 bool GameLayer::initGameOverLayer()
 {
-	/*m_gameOverLayer = GameOverLayer::create();
+	m_gameOverLayer = GameOverLayer::create();
 	m_gameOverLayer->setVisible(false);
-	this->addChild(m_gameOverLayer);*/
+	this->addChild(m_gameOverLayer);
 	return true;
 }
 
@@ -220,7 +220,8 @@ bool GameLayer::isGameOver()
 {
 	bool bRet = false;
 	auto lastBubble = m_listBubble.back();
-	if (lastBubble->getPosition().y < m_curReady->getPosition().y)
+	float readyY = m_curReady->getPosition().y + BUBBLE_RADIUS;
+	if (lastBubble->getPosition().y < readyY)
 	{
 		bRet = true;
 		return bRet;
@@ -280,7 +281,7 @@ void GameLayer::update(float delta)
 	if (isGameOver())
 	{
 		CCLOG("  ---------  Game is over !!!");
-		//m_gameOverLayer:setVisible(true);
+		m_gameOverLayer:setVisible(true);
 		return;
 	}
 
